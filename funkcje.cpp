@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <SFML/Graphics.hpp>
+#include <math.h>
+#include <stdlib.h>
+#include "funkcje.h"
 int sprawdzanie_ruchu(int tablica[8][8], int x, int y, int grana, int przeciwna)
 {
     int pomoc = 0;
@@ -9,14 +14,13 @@ int sprawdzanie_ruchu(int tablica[8][8], int x, int y, int grana, int przeciwna)
     while ((i - 2) >= 0 && tablica[i - 1][j] == przeciwna)
     {
         i--;
+
         if (tablica[i - 1][j] == grana)
         {
-
             pomoc = 1;
             break;
         }
     }
-
     i = x;
     j = y;
     // dol
@@ -133,13 +137,14 @@ void resetowaniegry(int tablica[8][8])
         }
     }
 
-    tablica[3][3] = 1;
-    tablica[3][4] = 2;
-    tablica[4][3] = 2;
-    tablica[4][4] = 1;
+    tablica[3][3] = 2;
+    tablica[3][4] = 1;
+    tablica[4][3] = 1;
+    tablica[4][4] = 2;
 }
-void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
+int wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
 {
+    int value = 0;
     int pomoc = 0;
     int pomoc1 = 0;
     int p;
@@ -163,6 +168,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         for (int c = i; c < x; c++)
         {
             tablica[c][j] = grana;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -184,6 +190,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         for (int c = x + 1; c <= i; c++)
         {
             tablica[c][j] = grana;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -205,6 +212,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         for (int c = y + 1; c <= j; c++)
         {
             tablica[i][c] = grana;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -226,6 +234,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         for (int c = j; c <= y; c++)
         {
             tablica[x][c] = grana;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -250,6 +259,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         {
             tablica[c][p] = grana;
             p++;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -279,6 +289,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
 
             tablica[c][p] = grana;
             p++;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -303,6 +314,7 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         {
             tablica[c][p] = grana;
             p--;
+            value += 1;
         }
     }
     pomoc = 0;
@@ -327,38 +339,23 @@ void wstawianie(int tablica[8][8], int x, int y, int grana, int przeciwna)
         {
             tablica[c][p] = grana;
             p++;
+            value += 1;
         }
     }
 
     if (pomoc1 == 1)
     {
         tablica[x][y] = grana;
+        value += 1;
     }
-
-    // dodawanie do tablicy z turami rzeczy, zeby w razie czrgo skonczyc gre jak dwie osoby nie wykonaja ruchu
-    // if (pomoc1 == 1)
-    // {
-    //     if (tury > 0)
-    //     {
-    //         T[tury] = T[tury - 1] + 1;
-    //     }
-    //     else
-    //         T[tury] = tury;
-    // }
-    // else
-    // {
-    //     if (tury > 0)
-    //     {
-    //         T[tury] = T[tury - 1];
-    //     }
-    //     else
-    //         T[tury] = tury;
-    // }
+    return value;
 }
-int sprawdzanieGry(int tablica[8][8])
+int sprawdzanieGry(int tablica[8][8], int grana)
 {
     int licznik = 0;
-    int licznikruchow = 0;
+    int licznikruchowB = 0;
+    int licznikruchowC = 0;
+
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -369,27 +366,297 @@ int sprawdzanieGry(int tablica[8][8])
             }
         }
     }
+
     if (licznik == 64)
     {
+
         return 1;
     }
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            if (sprawdzanie_ruchu(tablica, i, j, 1, 2) == 0)
+            if (sprawdzanie_ruchu(tablica, i, j, 1, 2) == 1 && tablica[i][j] != 1 && tablica[i][j] != 2)
             {
-                licznikruchow += 1;
+                licznikruchowC += 1;
             }
-            if (sprawdzanie_ruchu(tablica, i, j, 2, 1) == 0)
+            if (sprawdzanie_ruchu(tablica, i, j, 2, 1) == 1 && tablica[i][j] != 1 && tablica[i][j] != 2)
             {
-                licznikruchow += 1;
+                licznikruchowB += 1;
             }
         }
     }
-    if (licznikruchow == 128)
+    if (licznikruchowC + licznikruchowB == 0)
     {
+
         return 1;
     }
+    else if (licznikruchowB == 0 && grana == 2)
+    {
+
+        return 2;
+    }
+    else if (licznikruchowC == 0 && grana == 1)
+    {
+        ;
+        return 3;
+    }
+    // printf("%d\n", licznikruchowB);
+    // printf("%d\n", licznikruchowC);
     return 0;
+}
+// jesli wygraja czarni zwraca 1 , jesli biali 2, remis 0
+int zliczanie_punktow(int tablica[8][8], int zwyciezca[2])
+{
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if (tablica
+                    [i][j] == 1)
+                zwyciezca[0] = zwyciezca[0] + 1;
+            if (tablica
+                    [i][j] == 2)
+                zwyciezca[1] = zwyciezca[1] + 1;
+        }
+    }
+    if (zwyciezca[0] > zwyciezca[1])
+        return 1;
+    else if (zwyciezca[0] == zwyciezca[1])
+    {
+        return 0;
+    }
+    else
+    {
+        return 2;
+    }
+}
+int wstawianie_bot(int tablica[8][8], int x, int y, int grana, int przeciwna)
+{
+    int value = 0;
+    int pomoc = 0;
+    int pomoc1 = 0;
+    int p;
+    int i;
+    i = x;
+    int j;
+    j = y;
+    // gora
+    while ((i - 2) >= 0 && tablica[i - 1][j] == przeciwna)
+    {
+        i--;
+        if (tablica[i - 1][j] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        for (int c = i; c < x; c++)
+        {
+
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // dol
+    while ((i + 2) < 8 && tablica[i + 1][j] == przeciwna)
+    {
+        i++;
+        if (tablica[i + 1][j] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        for (int c = x + 1; c <= i; c++)
+        {
+
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // prawo
+    while ((j + 2) < 8 && tablica[i][j + 1] == przeciwna)
+    {
+        j++;
+        if (tablica[i][j + 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        for (int c = y + 1; c <= j; c++)
+        {
+
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // lewo
+    while ((j - 2) >= 0 && tablica[i][j - 1] == przeciwna)
+    {
+        j--;
+        if (tablica[i][j - 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        for (int c = j; c <= y; c++)
+        {
+
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // lewo gora
+    while ((i - 2) >= 0 && (j - 2) >= 0 && tablica[i - 1][j - 1] == przeciwna)
+    {
+        i--;
+        j--;
+        if (tablica[i - 1][j - 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        p = j;
+        for (int c = i; c <= x; c++)
+        {
+
+            p++;
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // prawo dol
+    while ((i + 2) < 8 && (j + 2) < 8 && tablica[i + 1][j + 1] == przeciwna)
+    {
+
+        i++;
+        j++;
+        if (tablica[i + 1][j + 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+
+            break;
+        }
+    }
+
+    if (pomoc == 1)
+    {
+
+        p = y + 1;
+        for (int c = x + 1; c <= i; c++)
+        {
+
+            p++;
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // prawo gora
+    while ((i - 2) >= 0 && (j + 2) < 8 && tablica[i - 1][j + 1] == przeciwna)
+    {
+        i--;
+        j++;
+        if (tablica[i - 1][j + 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        p = j;
+        for (int c = i; c < x; c++)
+        {
+
+            p--;
+            value += 1;
+        }
+    }
+    pomoc = 0;
+    i = x;
+    j = y;
+    // lewo dol
+    while ((i + 2) < 8 && (j - 2) >= 0 && tablica[i + 1][j - 1] == przeciwna)
+    {
+        i++;
+        j--;
+        if (tablica[i + 1][j - 1] == grana)
+        {
+            pomoc1 = 1;
+            pomoc = 1;
+            break;
+        }
+    }
+    if (pomoc == 1)
+    {
+        p = j;
+        for (int c = i; c > x; c--)
+        {
+
+            p++;
+            value += 1;
+        }
+    }
+
+    if (pomoc1 == 1)
+    {
+
+        value += 1;
+    }
+    return value;
+}
+int *bot(int grana, int przeciwna, int tablica[8][8])
+{
+    int najlepszy_ruch[2];
+    int ruch = 0;
+    int ruch_x = 0;
+    int ruch_y = 0;
+
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if (wstawianie_bot(tablica, i, j, grana, przeciwna) > ruch && tablica[i][j] != 1 && tablica[i][j] != 2)
+            {
+                ruch_x = i;
+                ruch_y = j;
+            }
+        }
+    }
+    najlepszy_ruch[0] = ruch_x;
+    najlepszy_ruch[1] = ruch_y;
+    return najlepszy_ruch;
 }
