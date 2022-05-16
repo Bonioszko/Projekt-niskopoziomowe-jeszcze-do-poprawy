@@ -14,7 +14,6 @@ int sprawdzanie_ruchu(int tablica[8][8], int x, int y, int grana, int przeciwna)
     while ((i - 2) >= 0 && tablica[i - 1][j] == przeciwna)
     {
         i--;
-
         if (tablica[i - 1][j] == grana)
         {
             pomoc = 1;
@@ -34,6 +33,8 @@ int sprawdzanie_ruchu(int tablica[8][8], int x, int y, int grana, int przeciwna)
             break;
         }
     }
+    i = x;
+    j = y;
     // prawo
     while ((j + 2) < 8 && tablica[i][j + 1] == przeciwna)
     {
@@ -121,9 +122,11 @@ int sprawdzanie_ruchu(int tablica[8][8], int x, int y, int grana, int przeciwna)
             break;
         }
     }
+
     if (pomoc == 1)
         return 1;
-    return 0;
+    else
+        return 0;
 }
 
 void resetowaniegry(int tablica[8][8])
@@ -398,7 +401,7 @@ int sprawdzanieGry(int tablica[8][8], int grana)
     }
     else if (licznikruchowC == 0 && grana == 1)
     {
-        ;
+
         return 3;
     }
     // printf("%d\n", licznikruchowB);
@@ -478,7 +481,6 @@ int wstawianie_bot(int tablica[8][8], int x, int y, int grana, int przeciwna)
     {
         for (int c = x + 1; c <= i; c++)
         {
-
             value += 1;
         }
     }
@@ -638,12 +640,12 @@ int wstawianie_bot(int tablica[8][8], int x, int y, int grana, int przeciwna)
     }
     return value;
 }
-int *bot(int grana, int przeciwna, int tablica[8][8])
+void *bot(int grana, int przeciwna, int tablica[8][8], int *ruch_x, int *ruch_y)
 {
-    int najlepszy_ruch[2];
+
     int ruch = 0;
-    int ruch_x = 0;
-    int ruch_y = 0;
+    *ruch_x = 0;
+    *ruch_y = 0;
 
     for (int i = 0; i < 8; i++)
     {
@@ -651,12 +653,9 @@ int *bot(int grana, int przeciwna, int tablica[8][8])
         {
             if (wstawianie_bot(tablica, i, j, grana, przeciwna) > ruch && tablica[i][j] != 1 && tablica[i][j] != 2)
             {
-                ruch_x = i;
-                ruch_y = j;
+                *ruch_x = i;
+                *ruch_y = j;
             }
         }
     }
-    najlepszy_ruch[0] = ruch_x;
-    najlepszy_ruch[1] = ruch_y;
-    return najlepszy_ruch;
 }
